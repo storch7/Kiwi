@@ -306,3 +306,24 @@ class TestRunStatusMenu(BaseCaseRun):
                 f'<span class="{execution_status.icon}"></span>{execution_status.name}',
                 html=True,
             )
+
+        def test_testplan_filter_is_hidden_on_my_runs_page(self):
+            """
+            The 'Filter by Test Plan' widget should not be visible on /runs/me/.
+            Ref: https://github.com/kiwitcms/Kiwi/issues/3997
+            """
+            # Faz login com um usuário de teste
+            self.login()
+
+            # Acessa a página /runs/me/
+            response = self.client.get('/runs/me/')
+            # Garante que a página carregou com sucesso
+            self.assertEqual(response.status_code, 200)
+
+            # A verificação principal: o texto do label do filtro NÃO deve
+            # estar no conteúdo HTML da página.
+            self.assertNotIn(
+                b'Filter by Test Plan',
+                response.content,
+                "O filtro 'Filter by Test Plan' foi encontrado indevidamente na página /runs/me/"
+            )
